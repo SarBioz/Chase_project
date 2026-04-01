@@ -53,3 +53,80 @@ def compute_stats(filepath, label):
 
 compute_stats(NORMAL_FILE, "NORMAL")
 compute_stats(QMCI_FILE,   "QMCI")
+
+
+
+
+ The behavior of Series.idxmin with all-NA values, or any-NA and skipna=False, is deprecated. In a future version this will raise ValueError
+  closest_idx = (group["VisitNumber"] - mean_visit).abs().idxmin()
+Traceback (most recent call last):
+  File "/opt/anaconda3/envs/myenv/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 3812, in get_loc
+    return self._engine.get_loc(casted_key)
+  File "pandas/_libs/index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 175, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index_class_helper.pxi", line 70, in pandas._libs.index.Int64Engine._check_type
+KeyError: nan
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Volumes/ESD-USB/ADRC Data/demographic_stats.py", line 54, in <module>
+    compute_stats(NORMAL_FILE, "NORMAL")
+  File "/Volumes/ESD-USB/ADRC Data/demographic_stats.py", line 30, in compute_stats
+    .apply(pick_representative_visit)
+  File "/opt/anaconda3/envs/myenv/lib/python3.10/site-packages/pandas/core/groupby/groupby.py", line 1826, in apply
+    result = self._python_apply_general(f, self._selected_obj)
+  File "/opt/anaconda3/envs/myenv/lib/python3.10/site-packages/pandas/core/groupby/groupby.py", line 1887, in _python_apply_general
+    values, mutated = self._grouper.apply_groupwise(f, data, self.axis)
+  File "/opt/anaconda3/envs/myenv/lib/python3.10/site-packages/pandas/core/groupby/ops.py", line 928, in apply_groupwise
+    res = f(group)
+  File "/Volumes/ESD-USB/ADRC Data/demographic_stats.py", line 13, in pick_representative_visit
+    return group.loc[closest_idx]
+  File "/opt/anaconda3/envs/myenv/lib/python3.10/site-packages/pandas/core/indexing.py", line 1192, in __getitem__
+    return self._getitem_axis(maybe_callable, axis=axis)
+  File "/opt/anaconda3/envs/myenv/lib/python3.10/site-packages/pandas/core/indexing.py", line 1432, in _getitem_axis
+    return self._get_label(key, axis=axis)
+  File "/opt/anaconda3/envs/myenv/lib/python3.10/site-packages/pandas/core/indexing.py", line 1382, in _get_label
+    return self.obj.xs(label, axis=axis)
+  File "/opt/anaconda3/envs/myenv/lib/python3.10/site-packages/pandas/core/generic.py", line 4323, in xs
+    loc = index.get_loc(key)
+  File "/opt/anaconda3/envs/myenv/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 3819, in get_loc
+    raise KeyError(key) from err
+KeyError: nan
+(myenv) sajjadilab@sajjadiabsmini2 ADRC Data % python demographic_stats.py
+/Volumes/ESD-USB/ADRC Data/demographic_stats.py:12: FutureWarning: The behavior of Series.idxmin with all-NA values, or any-NA and skipna=False, is deprecated. In a future version this will raise ValueError
+  closest_idx = (group["VisitNumber"] - mean_visit).abs().idxmin()
+Traceback (most recent call last):
+  File "/opt/anaconda3/envs/myenv/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 3812, in get_loc
+    return self._engine.get_loc(casted_key)
+  File "pandas/_libs/index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 175, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index_class_helper.pxi", line 70, in pandas._libs.index.Int64Engine._check_type
+KeyError: nan
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Volumes/ESD-USB/ADRC Data/demographic_stats.py", line 54, in <module>
+    compute_stats(NORMAL_FILE, "NORMAL")
+  File "/Volumes/ESD-USB/ADRC Data/demographic_stats.py", line 30, in compute_stats
+    .apply(pick_representative_visit)
+  File "/opt/anaconda3/envs/myenv/lib/python3.10/site-packages/pandas/core/groupby/groupby.py", line 1826, in apply
+    result = self._python_apply_general(f, self._selected_obj)
+  File "/opt/anaconda3/envs/myenv/lib/python3.10/site-packages/pandas/core/groupby/groupby.py", line 1887, in _python_apply_general
+    values, mutated = self._grouper.apply_groupwise(f, data, self.axis)
+  File "/opt/anaconda3/envs/myenv/lib/python3.10/site-packages/pandas/core/groupby/ops.py", line 928, in apply_groupwise
+    res = f(group)
+  File "/Volumes/ESD-USB/ADRC Data/demographic_stats.py", line 13, in pick_representative_visit
+    return group.loc[closest_idx]
+  File "/opt/anaconda3/envs/myenv/lib/python3.10/site-packages/pandas/core/indexing.py", line 1192, in __getitem__
+    return self._getitem_axis(maybe_callable, axis=axis)
+  File "/opt/anaconda3/envs/myenv/lib/python3.10/site-packages/pandas/core/indexing.py", line 1432, in _getitem_axis
+    return self._get_label(key, axis=axis)
+  File "/opt/anaconda3/envs/myenv/lib/python3.10/site-packages/pandas/core/indexing.py", line 1382, in _get_label
+    return self.obj.xs(label, axis=axis)
+  File "/opt/anaconda3/envs/myenv/lib/python3.10/site-packages/pandas/core/generic.py", line 4323, in xs
+    loc = index.get_loc(key)
+  File "/opt/anaconda3/envs/myenv/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 3819, in get_loc
+    raise KeyError(key) from err
+KeyError: nan
