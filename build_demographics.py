@@ -20,7 +20,7 @@ visits.columns = visits.columns.str.strip()
 
 # Keep only needed columns
 demo   = demo[["PatientID", "Sex", "EducationYears"]].copy()
-visits = visits[["PatientID", "Age"]].copy()
+visits = visits[["PatientID", "Age", "VisitNumber"]].copy()
 
 # Strip whitespace from IDs
 demo["PatientID"]   = demo["PatientID"].str.strip()

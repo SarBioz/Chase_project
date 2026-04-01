@@ -6,32 +6,49 @@ QMCI_FILE   = "qmci_demographic.xlsx"
 # ─────────────────────────────────────────────────────────────────────────────
 
 
+def pick_representative_visit(group):
+    """For a patient's visits, find the visit closest to the mean VisitNumber."""
+    mean_visit = group["VisitNumber"].mean()
+    closest_idx = (group["VisitNumber"] - mean_visit).abs().idxmin()
+    return group.loc[closest_idx]
+
+
 def compute_stats(filepath, label):
     df = pd.read_excel(filepath, dtype=str)
 
-    # Remove rows 2 and 3 (index 1 and 2, i.e. the 2nd and 3rd rows after header)
+    # Remove rows 2 and 3 (index 1 and 2)
     df = df.drop(index=[1, 2]).reset_index(drop=True)
 
     # Convert numeric columns
     df["Age"]            = pd.to_numeric(df["Age"], errors="coerce")
     df["EducationYears"] = pd.to_numeric(df["EducationYears"], errors="coerce")
+    df["VisitNumber"]    = pd.to_numeric(df["VisitNumber"], errors="coerce")
+
+    # For each patient, pick the visit closest to their mean VisitNumber
+    representative = (
+        df.groupby("PatientID", group_keys=False)
+        .apply(pick_representative_visit)
+        .reset_index(drop=True)
+    )
+
+    # For Sex, take one value per patient (first non-null)
+    sex_per_patient = (
+        df.groupby("PatientID")["Sex"]
+        .first()
+        .reset_index()
+    )
 
     print(f"\n{'='*45}")
-    print(f"  {label}  (n={len(df)})")
+    print(f"  {label}  (n={len(representative)} patients)")
     print(f"{'='*45}")
 
-    # Mean Age
-    print(f"  Mean Age            : {df['Age'].mean():.2f}")
+    print(f"  Mean Age            : {representative['Age'].mean():.2f}")
+    print(f"  Mean EducationYears : {representative['EducationYears'].mean():.2f}")
 
-    # Mean Education Years
-    print(f"  Mean EducationYears : {df['EducationYears'].mean():.2f}")
-
-    # Sex distribution + percentage
-    sex_counts = df["Sex"].value_counts()
-    sex_pct    = df["Sex"].value_counts(normalize=True) * 100
+    sex_counts = sex_per_patient["Sex"].value_counts()
     print(f"  Sex distribution:")
-    for sex in sex_counts.index:
-        print(f"    {sex}: {sex_counts[sex]} ({sex_pct[sex]:.1f}%)")
+    for sex, count in sex_counts.items():
+        print(f"    {sex}: {count}")
 
 
 compute_stats(NORMAL_FILE, "NORMAL")
