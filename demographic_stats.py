@@ -55,18 +55,18 @@ def compute_stats(filepath, label):
     print(f"  Mean Age            : {representative['Age'].mean():.2f}")
     print(f"  Mean EducationYears : {representative['EducationYears'].mean():.2f}")
 
-    sex_counts = sex_per_patient["Sex"].value_counts()
+    sex_counts = sex_per_patient["Sex"].value_counts(dropna=False)
     print(f"  Sex distribution:")
     for sex, count in sex_counts.items():
-        print(f"    {sex}: {count}")
+        label_sex = sex if pd.notna(sex) else "Unknown/NaN"
+        print(f"    {label_sex}: {count}")
+
+    nan_sex_ids = sex_per_patient[sex_per_patient["Sex"].isna()]["PatientID"].tolist()
+    if nan_sex_ids:
+        print(f"\n  Patients with NaN Sex:")
+        for pid in sorted(nan_sex_ids):
+            print(f"    {pid}")
 
 
 compute_stats(NORMAL_FILE, "NORMAL")
 compute_stats(QMCI_FILE,   "QMCI")
-
-
-  File "/opt/anaconda3/envs/myenv/lib/python3.10/site-packages/pandas/core/generic.py", line 4323, in xs
-    loc = index.get_loc(key)
-  File "/opt/anaconda3/envs/myenv/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 3819, in get_loc
-    raise KeyError(key) from err
-KeyError: nan
