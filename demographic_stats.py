@@ -8,9 +8,12 @@ QMCI_FILE   = "qmci_demographic.xlsx"
 
 def pick_representative_visit(group):
     """For a patient's visits, find the visit closest to the mean VisitNumber."""
-    mean_visit = group["VisitNumber"].mean()
-    closest_idx = (group["VisitNumber"] - mean_visit).abs().idxmin()
-    return group.loc[closest_idx]
+    valid = group.dropna(subset=["VisitNumber"])
+    if valid.empty:
+        return group.iloc[0]
+    mean_visit = valid["VisitNumber"].mean()
+    closest_idx = (valid["VisitNumber"] - mean_visit).abs().idxmin()
+    return valid.loc[closest_idx]
 
 
 def compute_stats(filepath, label):
@@ -23,6 +26,13 @@ def compute_stats(filepath, label):
     df["Age"]            = pd.to_numeric(df["Age"], errors="coerce")
     df["EducationYears"] = pd.to_numeric(df["EducationYears"], errors="coerce")
     df["VisitNumber"]    = pd.to_numeric(df["VisitNumber"], errors="coerce")
+
+    # Report patients with NaN VisitNumber
+    nan_visit_ids = df[df["VisitNumber"].isna()]["PatientID"].unique()
+    if len(nan_visit_ids) > 0:
+        print(f"\n[{label}] Patients with NaN VisitNumber ({len(nan_visit_ids)}):")
+        for pid in sorted(nan_visit_ids):
+            print(f"  {pid}")
 
     # For each patient, pick the visit closest to their mean VisitNumber
     representative = (
